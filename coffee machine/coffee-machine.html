@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+		<script src="https://kit.fontawesome.com/9935986003.js" crossorigin="anonymous"></script>
+
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+			integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
+			crossorigin="anonymous"
+		/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Кофейный аппарат</title>
+		<style>
+			body {
+				font-family: "Oswald", sans-serif;
+				background-image: url(/img/coffee\ back\ 2.jpg);
+			}
+			.coffee_txt {
+				margin-top: 1rem;
+				border: 1px solid black;
+				border-radius: 2px;
+				background-color: rgb(190, 186, 132);
+			}
+			.coffee_btn {
+				width: 0;
+				height: 0;
+				border-top: 40px solid transparent;
+				border-left: 80px solid rgb(205, 51, 51);
+				border-bottom: 40px solid transparent;
+			}
+			.coffee_btn:hover {
+				width: 0;
+				height: 0;
+				border-top: 40px solid transparent;
+				border-left: 80px solid rgb(224, 17, 17);
+				border-bottom: 40px solid transparent;
+				cursor: pointer;
+			}
+			.coffee_txt > span {
+				font-size: 32px;
+				font-weight: 700;
+				line-height: 80px;
+				vertical-align: middle;
+				margin-left: 20px;
+			}
+			#display {
+				width: 100%;
+				height: 196px;
+				background-color: rgba(44, 166, 214, 0.6);
+				color: white;
+				border: 2px dotted black;
+				border-radius: 2px;
+				padding: 10px;
+				text-align: center;
+			}
+			img[src$="rub.jpg"]:hover {
+				cursor: pointer;
+				filter: contrast(150%);
+			}
+			.fa-solid {
+				color: blue;
+			}
+			#changeBox {
+				width: 100%;
+				height: 200px;
+				position: relative;
+				background-color: rgba(74, 133, 156, 0.618);
+				border: 2px solid black;
+			}
+			img[src$="rub.png"] {
+				width: 70px;
+				position: absolute;
+			}
+			img[src$="rub.png"]:hover {
+				cursor: pointer;
+				filter: contrast(150%);
+			}
+
+			.animated {
+				animation-name: hide-bill;
+				animation-duration: 2s;
+				animation-timing-function: ease;
+			}
+			@keyframes hide-bill {
+				0% {
+					transform: rotate(-90deg) rotateY(1deg);
+					opacity: 1;
+				}
+				100% {
+					transform: rotate(-90deg) rotateY(60deg);
+					opacity: 0;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row mb-5">
+				<div class="col-md-6">
+					<div class="row coffee_txt">
+						<div class="coffee_btn" onclick="getCoffee(78, 'Эспрессо')"></div>
+						<span>Эспрессо - 78 руб.</span>
+					</div>
+					<div class="row coffee_txt">
+						<div class="coffee_btn" onclick="getCoffee(93, 'Раф')"></div>
+						<span>Раф - 93 руб.</span>
+					</div>
+					<div class="row coffee_txt">
+						<div class="coffee_btn" onclick="getCoffee(111, 'Латте')"></div>
+						<span>Латте - 111 руб.</span>
+					</div>
+					<div class="row coffee_txt">
+						<div class="coffee_btn" onclick="getCoffee(54, 'Моккачино')"></div>
+						<span>Моккачино - 54 руб.</span>
+					</div>
+					<div class="row coffee_txt">
+						<div class="coffee_btn" onclick="getCoffee(82, 'Фраппучино')"></div>
+						<span>Фраппучино - 82 руб.</span>
+					</div>
+				</div>
+				<div class="col-md-6 pt-3">
+					<div class="row">
+						<div class="col-md-6">
+							<div id="display">
+								<p id="displayInfo">Внесите деньги</p>
+								<p id="balance"><i class="fa-solid fa-piggy-bank"></i> Баланс: 0 руб.</p>
+								<div class="progress" hidden>
+									<div
+										class="progress-bar progress-bar-striped progress-bar-animated"
+										role="progressbar"
+										aria-valuenow="75"
+										aria-valuemin="0"
+										aria-valuemax="100"
+									></div>
+								</div>
+							</div>
+							<div class="d-flex justify-content-center">
+								<button class="btn btn-info btn-lg mt-5" onclick="getChange(money.value)">
+									Получить сдачу --->
+								</button>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<input type="hidden" id="money" />
+							<img src="/img/bill_acc.jpg" alt="Купюроприемник" />
+							<div id="changeBox"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<img src="/img/50rub.jpg" alt="" data-bill-value="50" />
+			<img src="/img/100rub.jpg" alt="" data-bill-value="100" />
+			<img src="/img/500rub.jpg" alt="" data-bill-value="500" />
+		</div>
+
+		<script>
+			let money = document.getElementById("money");
+			let display = document.getElementById("display");
+			let button = document.querySelector("button");
+
+			let bills = document.querySelectorAll("img[src$='rub.jpg']");
+			let bill_acc = document.querySelector("img[src$= 'bill_acc.jpg']");
+			let balance = document.getElementById("balance");
+
+			// Делаем банкноту движущейся от событий мыши
+			// Вариант 2 слушатель на событие мыши
+			for (bill of bills) {
+				bill.onmousedown = function (e) {
+					bill = e.currentTarget;
+					bill.style.position = "absolute";
+					bill.style.zIndex = 1000;
+					bill.style.transform = "rotate(90deg)";
+
+					document.addEventListener("mousemove", moveAt);
+
+					bill.onmouseup = function () {
+						document.removeEventListener("mousemove", moveAt);
+						bill.style.zIndex = 1;
+
+						let bill_top = bill.getBoundingClientRect().top;
+						let bill_left = bill.getBoundingClientRect().left;
+						let bill_right = bill.getBoundingClientRect().right;
+
+						let bill_acc_top = bill_acc.getBoundingClientRect().top;
+						let bill_acc_left = bill_acc.getBoundingClientRect().left;
+						let bill_acc_right = bill_acc.getBoundingClientRect().right;
+						let bill_acc_bottom =
+							bill_acc.getBoundingClientRect().bottom -
+							(bill_acc.getBoundingClientRect().height / 3) * 2;
+
+						if (
+							bill_top > bill_acc_top &&
+							bill_left > bill_acc_left &&
+							bill_right < bill_acc_right &&
+							bill_top < bill_acc_bottom
+						) {
+							bill.classList.add("animated");
+							setTimeout(function () {
+								bill.hidden = true;
+							}, 1700);
+							money.value = +money.value + +bill.dataset.billValue;
+							balance.innerHTML = `<i class="fa-solid fa-piggy-bank"></i> Баланс: ${money.value} руб.`;
+						}
+					};
+
+					function moveAt(event) {
+						let x = event.clientX - 148;
+						let y = event.clientY - 62;
+						bill.style.top = y + "px";
+						bill.style.left = x + "px";
+					}
+					// Отключаем браузеный Drag&Drop
+
+					bill.ondragstart = function () {
+						return false;
+					};
+				};
+			}
+
+			// Вывод на дисплей сообщений
+			function getCoffee(price, name) {
+				if (money.value >= price) {
+					money.value = money.value - price;
+					startProgressBar(name);
+					balance.innerHTML = `<i class="fa-solid fa-piggy-bank"></i> Баланс: ${money.value} руб.`;
+					// console.log(name + " готов!");
+				} else {
+					display.innerHTML = "Для покупки " + name + " недостаточно средств.";
+				}
+			}
+
+			function startProgressBar(coffeeName) {
+				let i = 0;
+				let progressBar = document.querySelector(".progress-bar");
+				progressBar.parentElement.hidden = false;
+				displayInfo.innerHTML = `<i class="fa-solid fa-hourglass fa-spin"></i> &nbsp;&nbsp; Ваш ${coffeeName} готовится ...`;
+				function progress() {
+					i++;
+					progressBar.style.width = i + "%";
+					if (i == 100) {
+						clearInterval(timerId);
+						progressBar.style.width = 0 + "%";
+						progressBar.parentElement.hidden = true;
+						displayInfo.innerHTML = coffeeName + " готов! Заберите напиток.";
+					} else if (i == 50) {
+						displayInfo.innerHTML = `<i class="fa-solid fa-hourglass-end fa-spin"></i> &nbsp;&nbsp; Ваш ${coffeeName} почти готов ...`;
+					}
+				}
+				let timerId = setInterval(progress, 30);
+			}
+
+			// Функция на сдачу способ 2
+
+			function getChange(num) {
+				let coin;
+				let top = getRandom(0, changeBox.getBoundingClientRect().height - 75);
+				let left = getRandom(0, changeBox.getBoundingClientRect().width - 75);
+
+				if (num <= 0) {
+					//убираем зацикливание на кнопке сдачи когда баланс 0
+					return;
+				}
+				if (num >= 10) coin = 10;
+				else if (num >= 5) coin = 5;
+				else if (num >= 2) coin = 2;
+				else if (num >= 1) coin = 1;
+				console.log(coin);
+				changeBox.innerHTML += `<img src="/img/${coin}rub.png" style="top:${top}px; left:${left}px" onclick="this.style.display = 'none'">`;
+
+				balance.innerHTML = `<i class="fa-solid fa-piggy-bank"></i> Баланс: 0 руб.`;
+
+				if (num - coin !== 0) {
+					getChange(num - coin);
+				}
+			}
+
+			function getRandom(min, max) {
+				return Math.random() * (max - min) + min;
+			}
+
+			// Функция на сдачу способ 1
+
+			// function getChange(num) {
+
+			// 	if (num >= 10) {
+			// 		console.log(10);
+			// 		getChange(num - 10);
+			// 	} else if (num >= 5) {
+			// 		console.log(5);
+			// 		getChange(num - 5);
+			// 	} else if (num >= 2) {
+			// 		console.log(2);
+			// 		getChange(num - 2);
+			// 	} else if (num >= 1) {
+			// 		console.log(1);
+			// 		getChange(num - 1);
+			// 	}
+			// }
+
+			// Функция на сдачу способ 3 через цикл (Можно так же использовать for, но тут нечего перебирать, а так можно написать вместо while, for но работать он будет так же как while, нет смысла в доп условиях.)
+
+			// function getChange(num) {
+			// 	while (num > 0) {
+			// 		if (num >= 10) {
+			// 			num -= 10;
+			// 			console.log(10);
+			// 		} else if (num >= 5) {
+			// 			num -= 5;
+			// 			console.log(5);
+			// 		} else if (num >= 2) {
+			// 			num -= 2;
+			// 			console.log(2);
+			// 		} else if (num >= 1) {
+			// 			num -= 1;
+			// 			console.log(1);
+			// 		}
+			// 	}
+			// }
+			// Тоже самое написано тернарным оператором (так писать не рекомендуется)
+			// function ternGetChange(num) {
+			// 	let coin = num >= 10 ? 10 : num >= 5 ? 5 : num >= 2 ? 2 : num >= 1 ? 1 : "Вся сдача выдана";
+			// 	console.log(coin);
+			// 	if (num - coin !== 0) {
+			// 		ternGetChange(num - coin);
+			// 	}
+			// }
+
+			// Вариант 1 слушатель на событие мыши
+			// for(let i = 0; i < bills.length; i++) {
+			// 	bills[i].onmousedown = function() {
+			// 		console.log("Событие onmousedown");
+			// 	};
+			// }
+
+			// Вариант3 слушатель на событие мыши
+			// bills.forEach(function (num) {
+			// 	num.onmousedown = function () {
+			// 		console.log("Событие onmousedown");
+			// 	}
+			// })
+		</script>
+
+		<script
+			src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>
