@@ -22,10 +22,11 @@ let timerId = setInterval(function() {
     i++;
     if(i== keyword.length) {
         clearInterval(timerId);
+        btnK.click();
   }
 },1000)
   
-  btnK.click();
+  
 }else {
   for (let i = 0; i < links.length; i++) {
     if (links[i].href.includes("napli.ru")) {
